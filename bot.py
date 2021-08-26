@@ -52,4 +52,10 @@ async def rickroll(ctx):
     else:
         ctx.send('You need to be in a voice channel to use this command')
 
+@client.command()
+async def flip(ctx):
+    coins = ['heads', 'tails']
+    rnd_pick = random.choice(coins)
+    ctx.send(rnd_pick)
+
 client.run(token)
