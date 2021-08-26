@@ -47,7 +47,7 @@ async def rickroll(ctx):
     if (ctx.author.voice):
         channel = ctx.message.author.voice.channel
         vc = await channel.connect()
-        source = FFmpegPCMAudio('/Users/nova/rickroll.mp3')
+        source = FFmpegPCMAudio('/home/pi/rickroll.mp3')
         vc.play(source)
     else:
         ctx.send('You need to be in a voice channel to use this command')
@@ -56,6 +56,6 @@ async def rickroll(ctx):
 async def flip(ctx):
     coins = ['heads', 'tails']
     rnd_pick = random.choice(coins)
-    ctx.send(rnd_pick)
+    ctx.send(str(rnd_pick))
 
 client.run(token)
