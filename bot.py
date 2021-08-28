@@ -40,7 +40,16 @@ async def meme(ctx):
     name = random_pick.title
     embed = discord.Embed(title = name)
     embed.set_image(url=url)
-    await ctx.send(embed = embed)
+    
+    # catching any sneaky exceptions and 
+    # writing them to a log file 
+    # mainly for future debugging purposes
+    try: 
+        await ctx.send(embed = embed)
+    except Exception as ex:
+        with open ('/home/pi/bot_logs/log.txt', 'w') as f:
+            f.write(ex)
+            f.close()
 
 @client.command(pass_context = True)
 async def rickroll(ctx):
