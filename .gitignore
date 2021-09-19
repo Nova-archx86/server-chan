@@ -1,2 +1,6 @@
+*.mp3
+__pycache__
+test
 .DS_Store
 TODO.txt
+logs
