@@ -16,7 +16,7 @@ class MusicPlayer(commands.Cog):
     @commands.command()
     async def play(self, ctx, url: str):
 
-        if (ctx.message.author.voice.channel):
+        if (ctx.message.author.voice):
 
             ytdl_options = {
                 'format': 'bestaudio/best',
