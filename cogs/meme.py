@@ -28,7 +28,6 @@ class MemeSender(commands.Cog):
 
     @commands.command()
     async def meme(self, ctx):
-
         sub = reddit.subreddit('dankmemes')
         hot = sub.hot(limit=50)
         random_post = []
