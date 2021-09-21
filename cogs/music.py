@@ -1,22 +1,32 @@
 import discord
-from discord import channel
-from discord.ext.commands.core import command
-from discord.player import FFmpegPCMAudio
 import youtube_dl
 import os
 from discord.ext import commands
-
+from discord import channel
+from discord.ext.commands.core import command
+from discord.player import FFmpegPCMAudio
 
 class MusicPlayer(commands.Cog):
     def __init__(self, client):
         self.client = client
-        # self.queue = {}
+        self.queue = {}
 
+    @commands.command()
+    async def join(self, ctx):
+        if (ctx.message.author.voice):
+            channel = ctx.message.author.voice.channel
+            await channel.connect()
+        else:
+            await ctx.send('You are not in a voice channel!') 
+    
     @commands.command()
     async def play(self, ctx, url: str):
         if (ctx.message.author.voice):
             ytdl_options = {
                 'format': 'bestaudio/best',
+                'no-playlist': True, 
+                'quiet': True,
+                'source_address': '0.0.0.0',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
                     'preferredcodec': 'mp3',
@@ -31,10 +41,8 @@ class MusicPlayer(commands.Cog):
                 if file.endswith('.mp3'):
                     os.rename(file, 'music.mp3')
 
-            channel = ctx.message.author.voice.channel
-            vc = await channel.connect()
             source = FFmpegPCMAudio('music.mp3')
-            vc.play(source)
+            ctx.voice_client.play(source)
             
         else:
             await ctx.send('You must be in a voice channel to use this command!')
@@ -42,14 +50,13 @@ class MusicPlayer(commands.Cog):
     @commands.command()
     async def leave(self, ctx):
         if (ctx.author.voice):
-            await ctx.guild.voice_client.disconnect()
+            await ctx.voice_client.disconnect()
         else:
             await ctx.send('I am not in a voice channel!')
 
     @commands.command()
     async def pause(self, ctx):
-        current_vc = discord.utils.get(
-            self.client.voice_clients, guild=ctx.guild)
+        current_vc = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if (current_vc.is_playing):
             current_vc.pause()
         else:
@@ -57,8 +64,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command()
     async def resume(self, ctx):
-        current_vc = discord.utils.get(
-            self.client.voice_clients, guild=ctx.guild)
+        current_vc = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
         if (current_vc.is_paused()):
             current_vc.resume()
         else:
@@ -66,8 +72,7 @@ class MusicPlayer(commands.Cog):
 
     @commands.command()
     async def stop(self, ctx):
-       current_vc = discord.utils.get(
-            self.client.voice_clients, guild=ctx.guild)
+       current_vc = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
        current_vc.stop()
 
 def setup(client):
