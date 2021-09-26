@@ -10,6 +10,7 @@ class MusicPlayer(commands.Cog):
         self.client = client
         self.music_path = '/Users/nova/Music/bot/'
         self.script_path = '/Users/nova/Workspace/Nova-archx86/Projects/ServerChan'
+        self.queue = []
 
     @commands.command()
     async def join(self, ctx):
@@ -20,6 +21,7 @@ class MusicPlayer(commands.Cog):
             await ctx.send('You are not in a voice channel!')
 
     # Plays song url's from youtube
+
     @commands.command()
     async def yt(self, ctx, url: str):
         if (ctx.message.author.voice):
@@ -43,6 +45,7 @@ class MusicPlayer(commands.Cog):
                     os.rename(file, 'music.mp3')
 
             source = FFmpegPCMAudio('music.mp3')
+            self.queue.append(source)
             ctx.voice_client.play(source)
 
         else:
@@ -60,7 +63,7 @@ class MusicPlayer(commands.Cog):
                 with open('../logs/fnf.txt', 'w') as f:
                     f.write(f'{err}')
                     f.close()
-            os.chdir(f'{self.script_path}/cogs')
+            os.chdir(f'{self.script_path}')
 
     # List all .mp3 files in the music folder
     @commands.command()
