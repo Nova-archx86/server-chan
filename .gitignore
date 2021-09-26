@@ -1,7 +1,4 @@
 *.mp3
 *.out
 __pycache__
-test
 .DS_Store
-TODO.txt
-logs
