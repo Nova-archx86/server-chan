@@ -20,7 +20,6 @@ reddit = praw.Reddit(
 
 )
 
-
 class MemeSender(commands.Cog):
 
     def __init__(self, client):
@@ -28,7 +27,7 @@ class MemeSender(commands.Cog):
 
     @commands.command()
     async def meme(self, ctx):
-        sub = reddit.subreddit('dankmemes')
+        sub = reddit.subreddit('memes')
         hot = sub.hot(limit=50)
         random_post = []
 
@@ -57,11 +56,10 @@ class MemeSender(commands.Cog):
         if (ctx.author.voice):
             channel = ctx.message.author.voice.channel
             vc = await channel.connect()
-            source = FFmpegPCMAudio('/home/pi/rickroll.mp3')
+            source = FFmpegPCMAudio('/Users/nova/rickroll.mp3')
             vc.play(source)
         else:
             await ctx.send('You need to be in a voice channel to use this command')
-
 
 def setup(client):
     client.add_cog(MemeSender(client))
