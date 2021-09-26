@@ -10,7 +10,6 @@ class MusicPlayer(commands.Cog):
         self.client = client
         self.music_path = '/Users/nova/Music/bot/'
         self.script_path = '/Users/nova/Workspace/Nova-archx86/Projects/ServerChan'
-        self.queue = []
 
     @commands.command()
     async def join(self, ctx):
@@ -21,14 +20,13 @@ class MusicPlayer(commands.Cog):
             await ctx.send('You are not in a voice channel!')
 
     # Plays song url's from youtube
-
     @commands.command()
     async def yt(self, ctx, url: str):
         if (ctx.message.author.voice):
             ytdl_options = {
                 'format': 'bestaudio/best',
-                'no-playlist': True,
                 'quiet': True,
+                'no-playlist': True,
                 'source_address': '0.0.0.0',
                 'postprocessors': [{
                     'key': 'FFmpegExtractAudio',
@@ -45,7 +43,6 @@ class MusicPlayer(commands.Cog):
                     os.rename(file, 'music.mp3')
 
             source = FFmpegPCMAudio('music.mp3')
-            self.queue.append(source)
             ctx.voice_client.play(source)
 
         else:
@@ -55,14 +52,12 @@ class MusicPlayer(commands.Cog):
     # Play's a song from the local file system
     async def play(self, ctx, query:str):
             os.chdir(self.music_path)
-            try:
+            # checks to see if the user's querey is not in the music folder
+            if (f'{query}.mp3' not in os.listdir(self.music_path)):
+                await ctx.send(f'These are not the files that you are looking for! (i couldnt find {query}, try using the $ls command to get a list of all music files)')
+            else:
                 source = FFmpegPCMAudio(f'{query}.mp3')
                 ctx.voice_client.play(source)
-            except FileNotFoundError as err:
-                await ctx.send(f'These are not the files that you are looking for! (i couldnt find {query}, try using the $lsdb command to get a list of all music files)')
-                with open('../logs/fnf.txt', 'w') as f:
-                    f.write(f'{err}')
-                    f.close()
             os.chdir(f'{self.script_path}')
 
     # List all .mp3 files in the music folder
@@ -71,9 +66,11 @@ class MusicPlayer(commands.Cog):
         list_of_music_files = []
         for file in os.listdir(self.music_path):
             if file.endswith('.mp3'):
-                list_of_music_files.append(file)
+                list_of_music_files.append(file[:-4])
         formatted_text = '\n'.join(list_of_music_files)
-        await ctx.send(f'Available music:\n{formatted_text}')
+        embed = discord.Embed(title='List of available music: ')
+        embed.description = formatted_text
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def leave(self, ctx):
