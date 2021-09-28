@@ -11,6 +11,10 @@ class MusicPlayer(commands.Cog):
         self.music_path = '/Users/nova/Music/bot/'
         self.script_path = '/Users/nova/Workspace/Nova-archx86/Projects/ServerChan'
 
+    def is_connected(self, ctx):
+        current_vc = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        return current_vc and current_vc.is_connected()
+
     @commands.command()
     async def join(self, ctx):
         if (ctx.message.author.voice):
@@ -22,42 +26,44 @@ class MusicPlayer(commands.Cog):
     # Plays song url's from youtube
     @commands.command()
     async def yt(self, ctx, url: str):
-        if (ctx.message.author.voice):
-            ytdl_options = {
-                'format': 'bestaudio/best',
-                'quiet': True,
-                'no-playlist': True,
-                'source_address': '0.0.0.0',
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
-                }],
-            }
+        if (not self.is_connected(ctx)):
+                await self.join(ctx)
 
-            with youtube_dl.YoutubeDL(ytdl_options) as ytdl:
+        ytdl_options = {
+            'format': 'bestaudio/best',
+            'quiet': True,
+            'no-playlist': True,
+            'source_address': '0.0.0.0',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        }
+
+        with youtube_dl.YoutubeDL(ytdl_options) as ytdl:
                 ytdl.download([url])
 
-            for file in os.listdir(self.script_path):
-                if file.endswith('.mp3'):
-                    os.rename(file, 'music.mp3')
+        for file in os.listdir(self.script_path):
+            if file.endswith('.mp3'):
+                os.rename(file, 'music.mp3')
 
-            source = FFmpegPCMAudio('music.mp3')
-            ctx.voice_client.play(source)
-
-        else:
-            await ctx.send('You must be in a voice channel to use this command!')
+        source = FFmpegPCMAudio('music.mp3')
+        ctx.voice_client.play(source)
 
     @commands.command()
     # Play's a song from the local file system
     async def play(self, ctx, query:str):
-            os.chdir(self.music_path)
-            # checks to see if the user's querey is not in the music folder
-            if (f'{query}.mp3' not in os.listdir(self.music_path)):
-                await ctx.send(f'These are not the files that you are looking for! (i couldnt find {query}, try using the $ls command to get a list of all music files)')
-            else:
-                source = FFmpegPCMAudio(f'{query}.mp3')
-                ctx.voice_client.play(source)
+        if (not self.is_connected(ctx)):
+                await self.join(ctx)
+
+        os.chdir(self.music_path)
+        # checks to see if the user's querey is not in the music folder
+        if (f'{query}.mp3' not in os.listdir(self.music_path)):
+            await ctx.send(f'These are not the files that you are looking for! (i couldnt find {query}, try using the $ls command to get a list of all music files)')
+        else:
+            source = FFmpegPCMAudio(f'{query}.mp3')
+            ctx.voice_client.play(source)
             os.chdir(f'{self.script_path}')
 
     # List all .mp3 files in the music folder
