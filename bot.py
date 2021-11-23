@@ -3,7 +3,7 @@ import os
 from discord.ext import commands
 
 client = commands.Bot(command_prefix='$', help_command=None)
-token = os.environ['TOKEN']
+token = os.environ['TOKEN_1']
 
 
 @client.event
