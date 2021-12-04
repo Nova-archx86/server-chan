@@ -13,9 +13,10 @@ class Status(commands.Cog):
     @commands.command()
     async def status(self, ctx):
         try: 
-            server =  MinecraftServer.lookup(self.server_address)
+            server = MinecraftServer.lookup(self.server_address)
             status = server.status()
             online_embed = discord.Embed(title='Online', color=discord.Color.green())
+            online_embed.add_field(name='Version', value=f'{status.version.name}')
             online_embed.add_field(name='Latency', value=f'{status.latency}ms')
             online_embed.add_field(name='Players online', value=f'{status.players.online}')
             await ctx.send(embed=online_embed)

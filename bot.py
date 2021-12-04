@@ -8,7 +8,8 @@ token = os.environ['TOKEN_1']
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.idle, activity=discord.Game('Python 3.9.6'))
+    await client.change_presence(
+            status=discord.Status.idle, activity=discord.Game('Python 3.9.6'))
     print('online')
 
 
