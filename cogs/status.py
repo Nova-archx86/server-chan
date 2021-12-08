@@ -17,7 +17,7 @@ class Status(commands.Cog):
             status = server.status()
             
             if status.players.sample is not None: 
-                players_names = str(f"{player.name} " for player in status.players.sample)
+                players_names = str([f"{player.name} " for player in status.players.sample])
             else:
                 players_names = "No players online"
 
