@@ -40,23 +40,14 @@ class MemeSender(commands.Cog):
         embed = discord.Embed(title=name)
         embed.set_image(url=url)
 
-        # catching any sneaky exceptions and
-        # writing them to a log file
-        # mainly for future debugging purposes
-
-        try:
-            await ctx.send(embed=embed)
-        except Exception as ex:
-            with open('./logs/log.txt', 'w') as f:
-                f.write(ex)
-                f.close()
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def rickroll(self, ctx):
         if (ctx.author.voice):
             channel = ctx.message.author.voice.channel
             vc = await channel.connect()
-            source = FFmpegPCMAudio('/Users/nova/rickroll.mp3')
+            source = FFmpegPCMAudio('./rick_roll.opus')
             vc.play(source)
         else:
             await ctx.send('You need to be in a voice channel to use this command')
