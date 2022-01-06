@@ -1,4 +1,4 @@
-*.mp3
+*.opus
 *.out
 __pycache__
 .DS_Store
