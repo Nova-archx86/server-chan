@@ -1,4 +1,6 @@
 *.opus
+*.m4a
+*.mp3
 *.out
 __pycache__
 .DS_Store

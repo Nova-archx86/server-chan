@@ -51,6 +51,15 @@ class MemeSender(commands.Cog):
             vc.play(source)
         else:
             await ctx.send('You need to be in a voice channel to use this command')
+    @commands.command() 
+    async def scotland(self, ctx):
+        if (ctx.author.voice):
+            channel = ctx.message.author.voice.channel
+            vc = await channel.connect()
+            source = FFmpegPCMAudio('./scotland.m4a')
+            vc.play(source)
+        else:
+            await ctx.send('You need to bee in a voice channel to use this command')
 
 def setup(client):
     client.add_cog(MemeSender(client))
