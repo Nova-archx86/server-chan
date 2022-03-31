@@ -44,7 +44,7 @@ class MemeSender(commands.Cog):
 
     @commands.command()
     async def rickroll(self, ctx):
-        if (ctx.author.voice):
+        if ctx.author.voice:
             channel = ctx.message.author.voice.channel
             vc = await channel.connect()
             source = FFmpegPCMAudio('./rick_roll.opus')
@@ -54,7 +54,7 @@ class MemeSender(commands.Cog):
     
     @commands.command() 
     async def scotland(self, ctx):
-        if (ctx.author.voice):
+        if ctx.author.voice:
             channel = ctx.message.author.voice.channel
             vc = await channel.connect()
             source = FFmpegPCMAudio('./scotland.m4a')
