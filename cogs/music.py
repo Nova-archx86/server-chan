@@ -9,33 +9,35 @@ class MusicPlayer(commands.Cog):
 
     def __init__(self, client):
         self.client = client
+        self.ytdlp_options = {
+                'format': 'bestaudio',
+                'outtmpl': '%(extractor)s-%(title)s.%(ext)s',
+                'quiet': True,
+                'noplaylist': True,
+                'source_address': '0.0.0.0'
+        }
 
     os.chdir('./music')
 
     def remove_file(self, file):
         subprocess.run(['rm', f'{file}'])
-
+    
     @commands.command()
     async def play(self, ctx, url:str):
         if ctx.author.voice: 
-            
-            ytdlp_options = {
-                'format': 'bestaudio',
-                'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-                'quiet': True,
-                'noplaylist': True,
-                'source_address': '0.0.0.0'
-            }
-
-            with YoutubeDL(ytdlp_options) as ytdl:
+            with YoutubeDL(self.ytdlp_options) as ytdl:
                 ytdl.download([url])
 
-            channel = ctx.message.author.voice.channel
-            vc = await channel.connect()
-            music_file = os.listdir()
+            music_file = os.listdir() 
             source = FFmpegPCMAudio(f'{music_file[0]}')
+            channel = ctx.message.author.voice.channel 
+            voice_clients = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
             
-            vc.play(source, after=lambda x: self.remove_file(music_file[0]))
+            if voice_clients == None:
+                vc = await channel.connect()
+                vc.play(source, after=lambda x: self.remove_file(music_file[0]))
+            else:
+                ctx.voice_client.play(source, after=lambda x: self.remove_file(music_file[0]))
         else:
             await ctx.send('you must be in a voice channel to use this command!')
 
