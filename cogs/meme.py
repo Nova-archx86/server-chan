@@ -26,13 +26,6 @@ class MemeSender(commands.Cog):
         self.client = client
 
     @commands.command()
-    async def donate(self, ctx):
-        msg ='Server-Chan™ is a free and open source project and takes time and effort in order to develop, if you would like to support development send $5 to this link: https://rb.gy/enaq3a' 
-        embed = discord.Embed(title='donate')
-        embed.add_field(name='donations', value=msg, inline=True)
-        await ctx.send(embed=embed)
-
-    @commands.command()
     async def meme(self, ctx):
         sub = reddit.subreddit('memes')
         hot = sub.hot(limit=50)
