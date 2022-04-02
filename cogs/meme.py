@@ -47,7 +47,7 @@ class MemeSender(commands.Cog):
         if ctx.author.voice:
             channel = ctx.message.author.voice.channel
             vc = await channel.connect()
-            source = FFmpegPCMAudio('./rick_roll.opus')
+            source = FFmpegPCMAudio('./rick_roll.mkv')
             vc.play(source)
         else:
             await ctx.send('You need to be in a voice channel to use this command')
@@ -57,7 +57,7 @@ class MemeSender(commands.Cog):
         if ctx.author.voice:
             channel = ctx.message.author.voice.channel
             vc = await channel.connect()
-            source = FFmpegPCMAudio('./scotland.m4a')
+            source = FFmpegPCMAudio('./scotland.webm')
             vc.play(source)
         else:
             await ctx.send('You need to bee in a voice channel to use this command')
