@@ -15,16 +15,16 @@ async def on_ready():
 
 @client.command()
 async def load(ctx, extension):
-    client.load_extension(f'cogs.{extension}')
+    client.load_extension(f'commands.{extension}')
 
 
 @client.command()
 async def unload(ctx, extension):
-    client.unload_extension(f'cogs.{extension}')
+    client.unload_extension(f'commands.{extension}')
 
-for file in os.listdir('./cogs'):
+for file in os.listdir('./commands'):
 
     if file.endswith('.py'):
-        client.load_extension(f'cogs.{file[:-3]}')
+        client.load_extension(f'commands.{file[:-3]}')
 
 client.run(token)
