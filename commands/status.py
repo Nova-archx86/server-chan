@@ -1,7 +1,7 @@
 import discord 
 import os
 from discord.ext import commands
-from mcstatus import MinecraftServer
+from mcstatus import JavaServer
 
 
 class Status(commands.Cog):
@@ -13,7 +13,7 @@ class Status(commands.Cog):
     @commands.command()
     async def status(self, ctx):
         try: 
-            server = MinecraftServer.lookup(self.server_address)
+            server = JavaServer.lookup(self.server_address)
             status = server.status()
             
             if status.players.sample is not None: 
