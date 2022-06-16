@@ -27,9 +27,14 @@ class MusicPlayer(commands.Cog):
                 await channel.connect() 
             
             with YoutubeDL(self.ytdlp_options) as ytdl:
-                ytdl.download([url])
-                source = FFmpegPCMAudio('./song')
-                ctx.voice_client.play(source, after=lambda x: os.remove('./song'))    
+                try: 
+                    await ctx.send('Downloading audio file...') 
+                    ytdl.download([url])
+                    source = FFmpegPCMAudio('./song')
+                    ctx.voice_client.play(source, after=lambda x: os.remove('./song'))
+                    await ctx.send(f'Now playing!')
+                except DownloadError as de:
+                    ctx.send("Failed to download audio!")
         else:
             await ctx.send('you must be in a voice channel to use this command!')
 
