@@ -15,6 +15,8 @@ class MusicPlayer(commands.Cog):
                 'noplaylist': True,
                 'source_address': '0.0.0.0'
         }
+
+        self.queue = []
     
     os.chdir('./music')
     
@@ -68,6 +70,7 @@ class MusicPlayer(commands.Cog):
                 await ctx.send('Nothing is currently playing!')
         else:
             await ctx.send('You must be in a voice channel to use this command!')
-
-def setup(client):
-    client.add_cog(MusicPlayer(client))
+    
+    
+async def setup(client):
+    await client.add_cog(MusicPlayer(client))

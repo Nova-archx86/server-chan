@@ -19,5 +19,5 @@ class Help(commands.Cog):
         embed.add_field(name='stop', value='Stops the current audio player and leaves the voice channel', inline=False)
         await ctx.send(embed=embed)
 
-def setup(client):
-    client.add_cog(Help(client))
+async def setup(client):
+    await client.add_cog(Help(client))

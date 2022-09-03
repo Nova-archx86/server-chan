@@ -3,7 +3,6 @@ import os
 from discord.ext import commands
 from mcstatus import JavaServer
 
-
 class Status(commands.Cog):
 
     def __init__(self, client):
@@ -34,5 +33,5 @@ class Status(commands.Cog):
             await ctx.send(embed=offline_embed)
 
 
-def setup(client):
-    client.add_cog(Status(client))
+async def setup(client):
+    await client.add_cog(Status(client))
