@@ -1,0 +1,4 @@
+discord
+mcstatus
+yt_dlp
+PyNaCl
