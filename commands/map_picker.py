@@ -24,10 +24,9 @@ class MapPicker(commands.Cog):
         selected_map = random.choice(self.maps)
         difficulty = random.choice(self.difficulties)
         file = discord.File(f'./maps/{selected_map}.webp', filename=f'{selected_map}.webp') 
-        embed = discord.Embed()
+        embed = discord.Embed(color=discord.Color.random())
         embed.add_field(name='Selected map', value=selected_map)
         embed.add_field(name='Difficulty', value=difficulty)
-        #embed.color(discord.Color(random))
         embed.set_thumbnail(url=f'attachment://{selected_map}.png')
         
         await ctx.send(file=file, embed=embed)
