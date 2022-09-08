@@ -18,7 +18,7 @@ class MusicPlayer(commands.Cog):
 
         self.queue = []
     
-    os.chdir('./music')
+    # os.chdir('./music')
     
     @commands.command()
     async def play(self, ctx, url:str):
@@ -31,9 +31,11 @@ class MusicPlayer(commands.Cog):
             with YoutubeDL(self.ytdlp_options) as ytdl:
                 try: 
                     await ctx.send('Downloading audio file...') 
+                    os.chdir('./music') 
                     ytdl.download([url])
-                    source = FFmpegPCMAudio('./song')
-                    ctx.voice_client.play(source, after=lambda x: os.remove('./song'))
+                    os.chdir('../')
+                    source = FFmpegPCMAudio('./music/song')
+                    ctx.voice_client.play(source, after=lambda x: os.remove('./music/song'))
                     await ctx.send(f'Now playing!')
                 except DownloadError as de:
                     ctx.send("Failed to download audio!")
