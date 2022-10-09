@@ -33,7 +33,7 @@ token = os.environ['TOKEN_1']
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.online, activity=discord.Game('Pycharm debugger'))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game('Pycharm CE'))
     logging.info(f'Successfully logged in!')
 
 
