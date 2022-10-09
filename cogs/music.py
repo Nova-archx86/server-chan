@@ -150,9 +150,9 @@ class MusicPlayer(commands.Cog):
     async def stop(self, ctx):
         if ctx.message.author.voice:
             if ctx.voice_client.is_playing():
+                self.queue.clear()
                 ctx.voice_client.stop()
                 await ctx.send('Stopped!')
-                self.queue.clear()
                 await ctx.send('Queue cleared!')
             else:
                 await ctx.send('Nothing is currently playing!')
