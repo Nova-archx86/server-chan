@@ -39,7 +39,7 @@ class MusicPlayer(commands.Cog):
         em.set_thumbnail(url=thumbnail)
         em.add_field(name='Song', value=title, inline=False)
         em.add_field(name='Channel', value=author, inline=False)
-        em.add_field(name='Estimated time', value=duration, inline=False)
+        em.add_field(name='Duration', value=duration, inline=False)
         await ctx.send(embed=em)
 
     def download(self, url):
@@ -51,9 +51,10 @@ class MusicPlayer(commands.Cog):
             thumbnail = info.get('thumbnail')
 
             # Formats the duration as mm:ss
-            duration = list(str(info.get('duration')))
-            duration.insert(1, ':')
-            duration = ''.join(duration)
+            duration_secs = info.get('duration')
+            mins, secs = divmod(duration_secs, 60)
+            duration = f'{mins}:{secs}'
+
             video_info = (title, duration, thumbnail, author)
             os.chdir('./music')
             ytdl.download([url])
