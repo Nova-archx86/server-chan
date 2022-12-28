@@ -25,7 +25,7 @@ class Status(commands.Cog):
             online_embed = discord.Embed(title='Online', color=discord.Color.green())
             online_embed.add_field(name='Version', value=f'{status.version.name}')
             online_embed.add_field(name='Description', value=f'{status.description}')
-            online_embed.add_field(name='Latency', value=f'{status.latency}ms')
+            online_embed.add_field(name='Latency', value=f'{round(status.latency)}ms')
             online_embed.add_field(name='Players online',
                                    value=f'{status.players.online}/{status.players.max}: {online_players}')
             await ctx.send(embed=online_embed)
