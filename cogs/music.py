@@ -1,5 +1,6 @@
 import discord
 import logging
+import time
 from discord.ext import commands
 from discord import FFmpegPCMAudio
 from downloader import Downloader
@@ -14,15 +15,13 @@ class MusicPlayer(commands.Cog):
     def queue_player(self, player: FFmpegPCMAudio):
         self.queue.append(player)
 
-    # Checks if the queue is empty
-    # removes the previously played song and plays the next one
-    # Loop recursively until the queue is empty
-    # Note: a while loop can't be used in place of recursion, due to the flow of execution
-
-    def check_queue(self, ctx):
-        if len(self.queue) > 1:
-            del self.queue[0]
-            ctx.voice_client.play(self.queue[0], after=lambda x: self.check_queue(ctx))
+    def continue_p(self, ctx):
+        while len(self.queue) > 1:     
+            if not ctx.voice_client.is_playing(): 
+                del self.queue[0]
+                ctx.voice_client.play(self.queue[0])
+            
+            time.sleep(1)
 
 
     @commands.command()
@@ -48,7 +47,7 @@ class MusicPlayer(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 self.queue_player(source)
-                ctx.voice_client.play(source, after=lambda x: self.check_queue(ctx))
+                ctx.voice_client.play(source, after=lambda x: self.continue_p(ctx))
                 embed = dl.create_embed(f'Now playing: {title}', info)
                 await ctx.send(embed=embed)
 
@@ -78,7 +77,12 @@ class MusicPlayer(commands.Cog):
         if ctx.message.author.voice:
             if ctx.voice_client.is_playing():
                 ctx.voice_client.stop()
-                self.check_queue(ctx)
+                
+                if len(self.queue) > 1:
+                    del self.queue[0]
+                
+                ctx.voice_client.play(self.queue[0], after=lambda x: self.continue_p(ctx))
+
                 await ctx.send('Skipped!')
             else:
                 await ctx.send('Nothing is playing in this channel')
