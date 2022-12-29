@@ -1,23 +1,14 @@
 import discord
 import logging
-import os
-import yt_dlp
 from discord.ext import commands
 from discord import FFmpegPCMAudio
-from yt_dlp import YoutubeDL
-
+from downloader import Downloader
+from yt_dlp import DownloadError
 
 class MusicPlayer(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.options = {
-            'format': 'bestaudio',
-            'outtmpl': '%(title)s',
-            'quiet': True,
-            'noplaylist': True,
-            'source_address': '0.0.0.0'
-        }
         self.queue = []
 
     def queue_player(self, player: FFmpegPCMAudio):
@@ -27,70 +18,40 @@ class MusicPlayer(commands.Cog):
     # removes the previously played song and plays the next one
     # Loop recursively until the queue is empty
     # Note: a while loop can't be used in place of recursion, due to the flow of execution
+
     def check_queue(self, ctx):
         if len(self.queue) > 1:
             del self.queue[0]
             ctx.voice_client.play(self.queue[0], after=lambda x: self.check_queue(ctx))
 
-    @staticmethod
-    async def send_embed(ctx, name, info):
-        title, duration, thumbnail, author = info
-        em = discord.Embed(title=name, color=discord.Color.random())
-        em.set_thumbnail(url=thumbnail)
-        em.add_field(name='Song', value=title, inline=False)
-        em.add_field(name='Channel', value=author, inline=False)
-        em.add_field(name='Duration', value=duration, inline=False)
-        await ctx.send(embed=em)
-
-    def download(self, url):
-        with YoutubeDL(self.options) as ytdl:
-            # get video info
-            info = ytdl.extract_info(url, download=False)
-            title = info.get('title')
-            author = info.get('uploader')
-            thumbnail = info.get('thumbnail')
-
-            # Formats the duration as mm:ss
-            duration_secs = info.get('duration')
-            mins, secs = divmod(duration_secs, 60)
-            duration = f'{mins}:{secs}'
-
-            video_info = (title, duration, thumbnail, author)
-            os.chdir('./music')
-            ytdl.download([url])
-            os.chdir('../')
-            return video_info
 
     @commands.command()
     async def play(self, ctx, url: str):
+        
         if ctx.message.author.voice:
             await self.join(ctx)
+            
+            dl = Downloader(url)
+            
+            try: 
+                info = dl.get_info()
+                dl.download()
+            except DownloadError as err:
+                await ctx.send('Failed to download audio!')
+
+            title = info[0]
+            source = FFmpegPCMAudio(f'./music/{title}')
 
             if ctx.voice_client.is_playing():
-                try:
-                    await ctx.send('Downloading audio...')
-                    info = self.download(url)
-                    title = info[0]
-                    source = FFmpegPCMAudio(f'./music/{title}')
-                    self.queue_player(source)
-                    await self.send_embed(ctx, 'Queued', info)
-                except yt_dlp.DownloadError as err:
-                    logging.error(f'{err}')
-                    await ctx.send('Failed to download audio')
-                    return
+                self.queue_player(source)
+                embed = dl.create_embed('Queued', info)
+                await ctx.send(embed=embed)
             else:
-                try:
-                    await ctx.send('Downloading audio...')
-                    info = self.download(url)
-                    title = info[0]
-                    source = FFmpegPCMAudio(f'./music/{title}')
-                    self.queue_player(source)
-                    ctx.voice_client.play(source, after=lambda x: self.check_queue(ctx))
-                    await self.send_embed(ctx, 'Now playing', info)
-                except yt_dlp.DownloadError as err:
-                    logging.error(f'{err}')
-                    await ctx.send('Failed to download audio')
-                    return
+                self.queue_player(source)
+                ctx.voice_client.play(source, after=lambda x: self.check_queue(ctx))
+                embed = dl.create_embed(f'Now playing: {title}', info)
+                await ctx.send(embed=embed)
+
         else:
             await ctx.send('you must be in a voice channel to use this command!')
 
