@@ -22,9 +22,12 @@ def clean_dir():
 
 
 async def load():
-    for file in os.listdir('cogs'):
+    files = os.listdir('cogs')
+
+    for file in files:
         if file.endswith('.py'):
             await client.load_extension(f'cogs.{file[:-3]}')
+            logging.info(f'Loaded cogs.{file[:-3]}')
 
 
 client = commands.Bot(command_prefix='$', help_command=None, intents=discord.Intents.all())
