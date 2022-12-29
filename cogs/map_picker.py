@@ -18,6 +18,8 @@ class MapPicker(commands.Cog):
             'Ridgeview Roadhouse',
             'Tanglewood Street house',
             'Edgefield',
+            'Sunny Meadows Mental Institution',
+            'Campsite'
         ]
 
     @commands.command()
