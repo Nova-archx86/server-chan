@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # This script checks for required dependancies and starts the bot using a custom command
 # 
 
