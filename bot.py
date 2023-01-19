@@ -17,8 +17,8 @@ def clean_dir():
         else:
             logging.info('Nothing to be cleaned!')
     except FileNotFoundError:
-        logging.error('No music directory found! exiting...')
-        exit(-1)
+        logging.info("No music direcotry found!, creating a new one...")
+        os.mkdir(f'{os.getcwd()}/music')
 
 
 async def load():
@@ -36,8 +36,7 @@ token = os.environ['TOKEN_1']
 
 @client.event
 async def on_ready():
-    # dalek reference 
-    await client.change_presence(status=discord.Status.online, activity=discord.Game('Exterminate!'))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game('python 3.10'))
     logging.info(f'Successfully logged in!')
 
 
