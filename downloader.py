@@ -10,7 +10,7 @@ class Downloader:
         self.url = url
         self.options = {
             'format': 'bestaudio',
-            'outtmpl': '%(title)s',
+            'outtmpl': '%(id)s',
             'quiet': True,
             'noplaylist': True,
             'source_address': '0.0.0.0'
@@ -18,7 +18,7 @@ class Downloader:
     
     @staticmethod
     def create_embed(name, info) -> Embed:
-        title, duration, thumbnail, author = info
+        id, title, duration, thumbnail, author = info
         em = Embed(title=name, color=Color.random())
         em.set_thumbnail(url=thumbnail)
         em.add_field(name='Song', value=title, inline=False)
@@ -33,6 +33,7 @@ class Downloader:
 
         with YoutubeDL(self.options) as yt: 
             info = yt.extract_info(self.url, download=False)
+            id = info.get('id') 
             title = info.get('title')
             author = info.get('uploader')
             thumbnail = info.get('thumbnail')
@@ -41,7 +42,7 @@ class Downloader:
             duration_secs = info.get('duration')
             mins, secs = divmod(duration_secs, 60)
             duration = f'{mins}:{secs}'
-            video_info = (title, duration, thumbnail, author)
+            video_info = (id, title, duration, thumbnail, author)
 
             return video_info
 

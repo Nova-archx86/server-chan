@@ -38,8 +38,9 @@ class MusicPlayer(commands.Cog):
             except DownloadError as err:
                 await ctx.send('Failed to download audio!')
 
-            title = info[0]
-            source = FFmpegPCMAudio(f'./music/{title}')
+            id = info[0] 
+            title = info[1]
+            source = FFmpegPCMAudio(f'./music/{id}')
 
             if ctx.voice_client.is_playing():
                 self.queue_player(source)
