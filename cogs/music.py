@@ -1,6 +1,7 @@
 import discord
 import logging
 import time
+import asyncio
 from discord.ext import commands
 from discord import FFmpegPCMAudio
 from downloader import Downloader
@@ -15,13 +16,16 @@ class MusicPlayer(commands.Cog):
     def queue_player(self, player: FFmpegPCMAudio):
         self.queue.append(player)
 
-    def continue_p(self, ctx):
+    async def continue_p(self, ctx):
         while len(self.queue) > 1:     
             if not ctx.voice_client.is_playing(): 
                 del self.queue[0]
-                ctx.voice_client.play(self.queue[0])
+                try: 
+                    ctx.voice_client.play(self.queue[0])
+                except Exception:
+                    ctx.send('An error occured while playing audio')
             
-            time.sleep(1)
+            await asyncio.sleep(1)
 
 
     @commands.command()
@@ -48,7 +52,12 @@ class MusicPlayer(commands.Cog):
                 await ctx.send(embed=embed)
             else:
                 self.queue_player(source)
-                ctx.voice_client.play(source, after=lambda x: self.continue_p(ctx))
+                
+                try: 
+                    ctx.voice_client.play(source, after=lambda x: asyncio.run(self.continue_p(ctx)))
+                except Exception:
+                    await ctxt.send('An error occured while playing audio!')
+
                 embed = dl.create_embed(f'Now playing: {title}', info)
                 await ctx.send(embed=embed)
 
@@ -79,11 +88,7 @@ class MusicPlayer(commands.Cog):
             if ctx.voice_client.is_playing():
                 ctx.voice_client.stop()
                 
-                if len(self.queue) > 1:
-                    del self.queue[0]
-                
-                ctx.voice_client.play(self.queue[0], after=lambda x: self.continue_p(ctx))
-
+                await self.continue_p(ctx)
                 await ctx.send('Skipped!')
             else:
                 await ctx.send('Nothing is playing in this channel')
