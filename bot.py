@@ -7,6 +7,35 @@ from discord.ext import commands
 
 discord.utils.setup_logging()
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--token', metavar='<TOKEN_ENV_VARIABLE>', 
+                        type=str, help='The token to login with (must be stored in an env variable!)',
+                        required=False)
+
+parser.add_argument('--prefix', metavar='<PREFIX_CHAR>', 
+                        type=str, help='the command prefix to use ex: !,%, <', 
+                        required=False)
+
+args = parser.parse_args()
+    
+if args.token == None:
+    # Default token env to use 
+    token = os.environ['TOKEN_1']
+else:
+    token = os.environ[args.token]
+
+if args.prefix == None:
+   client = commands.Bot(
+           command_prefix='$',
+           help_command=None,
+           intents=discord.Intents.all())
+else:
+    client = commands.Bot(
+            command_prefix=args.prefix, 
+            help_command=None, 
+            intents=discord.Intents.all())
+
+
 
 def clean_dir():
     logging.info('Cleaning music directory...')
@@ -31,8 +60,7 @@ async def load():
             logging.info(f'Loaded cogs.{file[:-3]}')
 
 
-client = commands.Bot(command_prefix='$', help_command=None, intents=discord.Intents.all())
-# token = os.environ['TOKEN_1']
+# client = commands.Bot(command_prefix='$', help_command=None, intents=discord.Intents.all())
 
 
 @client.event
@@ -42,16 +70,6 @@ async def on_ready():
 
 
 async def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--token', metavar='<TOKEN_ENV_VARIABLE>', type=str, help='The token to login with (must be stored in an env variable!)', required=False) 
-    args = parser.parse_args()
-    
-    if args.token == None:
-        # Default token env to use 
-        token = os.environ['TOKEN_1']
-    else:
-        token = os.environ[args.token]
-
     clean_dir()
     await load()
     await client.start(token)
