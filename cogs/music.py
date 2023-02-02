@@ -17,25 +17,27 @@ class MusicPlayer(commands.Cog):
         self.queue.append(player)
 
     async def continue_p(self, ctx):
-        while len(self.queue) > 1:     
+        while len(self.queue) >= 1:     
             if not ctx.voice_client.is_playing(): 
-                del self.queue[0]
+                self.queue.pop(0)
                 try: 
                     ctx.voice_client.play(self.queue[0])
                 except Exception:
-                    ctx.send('An error occured while playing audio')
+                    await ctx.send('An error occured while playing audio')
             
             await asyncio.sleep(1)
 
 
     @commands.command()
-    async def play(self, ctx, url: str):
-        
+    async def play(self, ctx, url: str=None):
         if ctx.message.author.voice:
+            if url is None: 
+                await ctx.send('You must provide at least one url!')
+                return
+
             await self.join(ctx)
-            
             dl = Downloader(url)
-            
+
             try: 
                 info = dl.get_info()
                 dl.download()
@@ -88,8 +90,11 @@ class MusicPlayer(commands.Cog):
             if ctx.voice_client.is_playing():
                 ctx.voice_client.stop()
                 
-                await self.continue_p(ctx)
-                await ctx.send('Skipped!')
+                if len(self.queue) == 1:
+                    self.queue.pop(0)
+                else:
+                    await ctx.send('skipped!')
+                    await self.continue_p(ctx)
             else:
                 await ctx.send('Nothing is playing in this channel')
         else:
