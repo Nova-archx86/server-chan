@@ -8,8 +8,8 @@ from discord.ext import commands
 discord.utils.setup_logging()
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--token', metavar='<TOKEN_ENV_VARIABLE>', 
-                        type=str, help='The token to login with (must be stored in an env variable!)',
+parser.add_argument('--token', metavar='<TOKEN>', 
+                        type=str, help='The token to login with',
                         required=False)
 
 parser.add_argument('--prefix', metavar='<PREFIX_CHAR>', 
@@ -22,7 +22,7 @@ if args.token == None:
     # Default token env to use 
     token = os.environ['TOKEN_1']
 else:
-    token = os.environ[args.token]
+    token = args.token
 
 if args.prefix == None:
    client = commands.Bot(
