@@ -3,11 +3,17 @@ import os
 import asyncio
 import logging
 import argparse
+import subprocess
+
 from discord.ext import commands
+
+# For the the bot status... not required
+python_version = str(subprocess.run(['python3', '--version'], capture_output=True).stdout, 'utf-8')
 
 discord.utils.setup_logging()
 
 parser = argparse.ArgumentParser()
+
 parser.add_argument('--token', metavar='<TOKEN>', 
                         type=str, help='The token to login with',
                         required=False)
@@ -39,13 +45,17 @@ else:
 
 def clean_dir():
     logging.info('Cleaning music directory...')
+    
     try:
         if os.listdir('music'):
+            
             for file in os.listdir('music'):
                 logging.info(f'removing {file}')
                 os.remove(f'music/{file}')
         else:
+            
             logging.info('Nothing to be cleaned!')
+
     except FileNotFoundError:
         logging.info("No music direcotry found!, creating a new one...")
         os.mkdir(f'{os.getcwd()}/music')
@@ -55,6 +65,7 @@ async def load():
     files = os.listdir('cogs')
 
     for file in files:
+        
         if file.endswith('.py'):
             await client.load_extension(f'cogs.{file[:-3]}')
             logging.info(f'Loaded cogs.{file[:-3]}')
@@ -65,10 +76,10 @@ async def load():
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.online, activity=discord.Game('python 3.10'))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(f'{python_version[:-3]}'))
     logging.info(f'Successfully logged in!')
 
-
+# entry point
 async def main():
     clean_dir()
     await load()
