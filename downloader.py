@@ -1,6 +1,4 @@
 import os
-import logging
-from discord import Embed, Color
 from yt_dlp import YoutubeDL
 
 class Downloader:
@@ -8,6 +6,11 @@ class Downloader:
     def __init__(self, url):
         
         self.url = url
+        
+        # the output filename is the video id due to some 
+        # youtube video titles having names that don't play nice
+        # with bash or any shell for that matter
+
         self.options = {
             'format': 'bestaudio',
             'outtmpl': '%(id)s',
@@ -16,23 +19,12 @@ class Downloader:
             'source_address': '0.0.0.0'
         }
     
-    @staticmethod
-    def create_embed(name, info) -> Embed:
-        id, title, duration, thumbnail, author = info
-        em = Embed(title=name, color=Color.random())
-        em.set_thumbnail(url=thumbnail)
-        em.add_field(name='Song', value=title, inline=False)
-        em.add_field(name='Channel', value=author, inline=False)
-        em.add_field(name='Duration', value=duration, inline=False)
-        
-        return em
-
-
     def get_info(self) -> tuple:
         video_info = None
 
         with YoutubeDL(self.options) as yt: 
             info = yt.extract_info(self.url, download=False)
+            
             id = info.get('id') 
             title = info.get('title')
             author = info.get('uploader')
