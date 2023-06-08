@@ -10,7 +10,7 @@ class Help(commands.Cog):
     @commands.command()
     async def help(self, ctx):
         embed = discord.Embed(title='List of commands', color=discord.Color.random())
-        embed.add_field(name='prefix', value='$', inline=False)
+        embed.add_field(name='prefix', value=ctx.prefix, inline=False)
         embed.add_field(name='help', value='Sends this message', inline=False)
         embed.add_field(name='status', value='Gets the current status from the minecraft server (online players and '
                                              'latency)', inline=False)
