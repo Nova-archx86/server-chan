@@ -1,5 +1,7 @@
 import discord
 import os
+import logging
+
 from discord.ext import commands
 from mcstatus import JavaServer
 
@@ -32,7 +34,7 @@ class Status(commands.Cog):
         except Exception as err:
             offline_embed = discord.Embed(title='Error', description='Could not connect to the server!',
                                           color=discord.Color.red())
-            print(f'{err}')
+            logging.error(f'{err}')
             await ctx.send(embed=offline_embed)
 
 
