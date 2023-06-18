@@ -2,6 +2,7 @@ import discord
 import logging
 import time
 import asyncio
+import os
 
 from discord.ext import commands
 from discord import FFmpegPCMAudio, Embed, Color, ClientException
@@ -87,31 +88,36 @@ class MusicPlayer(commands.Cog):
                 return
 
             await self.join(ctx)
+            
             dl = Downloader(url)
+            info = dl.get_info()
+            id = info[0]
 
             try: 
-                info = dl.get_info()
-                dl.download()
+                
+                # Check if the audio has already been downloaded 
+                if id in os.listdir('./music/'):
+                    await ctx.send('audio already downloaded! skipping download...')
+                else:
+                    dl.download()
+
             except DownloadError as err:
+                
                 await ctx.send('Failed to download audio!')
                 logging.error(f'{err}')
             
-            id = info[0] 
             source = QueueItem(info, FFmpegPCMAudio(f'./music/{id}'))
 
             if ctx.voice_client.is_playing():
                 
                 self.queue.push(source)
-                
                 await source.send_embed(ctx, info, 'Queued')
 
             else:
-                
                 self.queue.push(source)
 
                 ctx.voice_client.play(source.audio, after=lambda x: asyncio.run(self.queue.loop(ctx)))
                 await source.send_embed(ctx, info, 'Now playing:')
-
 
         else:
             await ctx.send('you must be in a voice channel to use this command!')
