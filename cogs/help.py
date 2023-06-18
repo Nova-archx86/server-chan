@@ -15,7 +15,7 @@ class Help(commands.Cog):
         embed.add_field(name='status', value='Gets the current status from the minecraft server (online players and '
                                              'latency)', inline=False)
         embed.add_field(name='pm', value='Randomly picks a map and difficulty for phasmophobia')
-        embed.add_field(name='play <url>', value='Downloads and plays a youtube url using the yt-dlp project', inline=False)
+        embed.add_field(name='play <url>', value='Downloads and plays audio from a valid  url using the yt-dlp project', inline=False)
         embed.add_field(name='pause', value='Pauses the current audio player', inline=False)
         embed.add_field(name='resume', value='Resumes a paused audio player', inline=False)
         embed.add_field(name='skip', value='Skips the current song in the queue', inline=False)
