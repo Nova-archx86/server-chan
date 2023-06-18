@@ -108,7 +108,7 @@ class MusicPlayer(commands.Cog):
             
             source = QueueItem(info, FFmpegPCMAudio(f'./music/{id}'))
 
-            if ctx.voice_client.is_playing():
+            if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
                 
                 self.queue.push(source)
                 await source.send_embed(ctx, info, 'Queued')
