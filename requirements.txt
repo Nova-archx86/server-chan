@@ -3,3 +3,4 @@ mcstatus
 yt_dlp
 PyNaCl
 dnspython>=2.6.0rc1 # not directly required, pinned by Snyk to avoid a vulnerability
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
