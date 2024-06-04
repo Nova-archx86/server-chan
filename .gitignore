@@ -4,3 +4,9 @@ music
 *.log
 *.gz
 *.out
+lib/
+bin/
+include/
+lib64
+share/
+pyvenv.cfg
