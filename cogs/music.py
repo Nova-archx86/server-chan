@@ -10,14 +10,14 @@ import asyncio
 import os
 
 from discord.ext import commands
-from discord import FFmpegPCMAudio, Embed, Color, ClientException
+from discord import FFmpegPCMAudio, Embed, Color, ClientException, PCMVolumeTransformer
 
 from downloader import Downloader
 from yt_dlp import DownloadError
 
 class QueueItem:
     
-    def __init__(self, info:tuple, audio:FFmpegPCMAudio):
+    def __init__(self, info:tuple, audio:PCMVolumeTransformer):
         self.info = info
         self.audio = audio
     
@@ -111,7 +111,7 @@ class MusicPlayer(commands.Cog):
                 await ctx.send('Failed to download audio!')
                 logging.error(f'{err}')
             
-            source = QueueItem(info, FFmpegPCMAudio(f'./music/{id}'))
+            source = QueueItem(info, PCMVolumeTransformer(FFmpegPCMAudio(f'./music/{id}'), 0.50))
 
             if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
                 
@@ -215,6 +215,23 @@ class MusicPlayer(commands.Cog):
             else:
                 await ctx.send('Nothing is currently playing!')
 
+        else:
+            await ctx.send('You must be in a voice channel to use this command!')
+
+    @commands.command()
+    async def vol(self, ctx, volume: float):
+        if ctx.message.author.voice:
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+   
+            if voice.is_playing():
+                if 0 <= volume <= 100:
+                    new_vol = volume / 100
+                    voice.source.volume = new_vol
+                else:
+                    await ctx.send('hey dummy! volume should be between 0 and 100!')
+
+            else:
+                await ctx.send('Nothing is playing in this channel')
         else:
             await ctx.send('You must be in a voice channel to use this command!')
 

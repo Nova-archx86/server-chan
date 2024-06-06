@@ -26,7 +26,9 @@ class Help(commands.Cog):
         embed.add_field(name='resume', value='Resumes a paused audio player', inline=False)
         embed.add_field(name='skip', value='Skips the current song in the queue', inline=False)
         embed.add_field(name='stop', value='Stops the current audio player and leaves the voice channel', inline=False)
-        embed.add_field(name='leave', value='disconnects from the current voice channel', inline=False)
+        embed.add_field(name='leave', value='Disconnects from the current voice channel', inline=False)
+        embed.add_field(name='vol', value='Sets a volume (between 0 and 100) for the current voice channel', inline=False)
+
         await ctx.send(embed=embed)
 
 
