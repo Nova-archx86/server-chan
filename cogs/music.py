@@ -16,31 +16,29 @@ from downloader import Downloader
 from yt_dlp import DownloadError
 
 class QueueItem:
-    
+
     def __init__(self, info:tuple, audio:PCMVolumeTransformer):
         self.info = info
         self.audio = audio
-    
+
     def __repr__(self):
         title = self.info[1]
         return title
-    
+
     async def send_embed(self, ctx, info,  embed_title):
-        # video info from yt_dlp 
+        # video info from yt_dlp
         id, title, duration, thumbnail, author = info
-        
+
         em = Embed(title=embed_title, color=Color.random())
         em.set_thumbnail(url=thumbnail)
         em.add_field(name='Song', value=title, inline=False)
         em.add_field(name='Channel', value=author, inline=False)
         em.add_field(name='Duration', value=duration, inline=False)
-        
         await ctx.send(embed=em)
-        
 
 
 class MusicQueue:
-    
+
     def __init__(self):
         self.items = []
 
@@ -60,20 +58,17 @@ class MusicQueue:
         self.items.clear()
 
     # Loop through the rest of the songs in queue
-    async def loop(self, ctx):
-        
-        while len(self.items) >= 1:     
-            
-            if not ctx.voice_client.is_playing(): 
+    async def loop(self, ctx, vc):
+
+        while len(self.items) >= 1:
+            if not vc.is_playing() and not vc.is_paused():
                 self.pop()
-                
-                try: 
-                    ctx.voice_client.play(self.items[0].audio)
+                try:
+                    vc.play(self.items[0].audio)
                 except ClientException:
                     await ctx.send('An error occured while playing audio')
 
             await asyncio.sleep(1)
-
 
 class MusicPlayer(commands.Cog):
 
@@ -81,103 +76,91 @@ class MusicPlayer(commands.Cog):
         self.client = client
         self.queue = MusicQueue()
 
-        
     @commands.command()
-    async def play(self, ctx, url: str=None):
-        
+    async def play(self, ctx, url=None):
         if ctx.message.author.voice:
-            
-            # Make sure that a url parameter was provided 
-            if url is None: 
+            # Make sure that a url parameter was provided
+            if url is None:
                 await ctx.send('You must provide at least one url!')
                 return
 
             await self.join(ctx)
-            
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
             dl = Downloader(url)
             info = dl.get_info()
             id = info[0]
 
-            try: 
-                
-                # Check if the audio has already been downloaded 
+            try:
+                # Check if the audio has already been downloaded
                 if id in os.listdir('./music/'):
                     await ctx.send('audio already downloaded! skipping download...')
                 else:
                     dl.download()
 
             except DownloadError as err:
-                
                 await ctx.send('Failed to download audio!')
                 logging.error(f'{err}')
-            
             source = QueueItem(info, PCMVolumeTransformer(FFmpegPCMAudio(f'./music/{id}'), 0.50))
 
-            if ctx.voice_client.is_playing() or ctx.voice_client.is_paused():
-                
+            if voice.is_playing() or voice.is_paused():
                 self.queue.push(source)
                 await source.send_embed(ctx, info, 'Queued')
 
             else:
                 self.queue.push(source)
 
-                ctx.voice_client.play(source.audio, after=lambda x: asyncio.run(self.queue.loop(ctx)))
+                voice.play(source.audio, after=lambda x: asyncio.run(self.queue.loop(ctx, voice)))
                 await source.send_embed(ctx, info, 'Now playing:')
 
         else:
             await ctx.send('you must be in a voice channel to use this command!')
 
- 
+
     @commands.command()
     async def join(self, ctx):
-        voice_clients = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
-        
-        if voice_clients is None:
+        voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+        if voice is None:
             channel = ctx.message.author.voice.channel
             await channel.connect()
 
-    
     @commands.command()
     async def leave(self, ctx):
         if ctx.message.author.voice:
-            
-            if ctx.voice_client.is_playing():
-                
-                ctx.voice_client.stop()
-                await ctx.voice_client.disconnect()
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+            if voice.is_playing():
+                voice.stop()
+                await voice.disconnect()
 
             else:
-                await ctx.voice_client.disconnect()
+                await voice.disconnect()
         else:
             await ctx.send('You must be in a voice channel to use this command!')
 
-    
     @commands.command()
     async def skip(self, ctx):
         if ctx.message.author.voice:
-            
-            if ctx.voice_client.is_playing():
-                
-                ctx.voice_client.stop()
-                
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+            if voice.is_playing():
+                voice.stop()
                 if len(self.queue.items) == 1:
                     self.queue.pop()
                 else:
                     await ctx.send('skipped!')
-                    await self.queue.loop(ctx)
+                    await self.queue.loop(ctx, voice)
 
             else:
                 await ctx.send('Nothing is playing in this channel')
         else:
             await ctx.send('You must be in a voice channel to use this command!')
 
-    
     @commands.command()
     async def pause(self, ctx):
         if ctx.message.author.voice:
-            
-            if ctx.voice_client.is_playing():
-                ctx.voice_client.pause()
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+            if voice.is_playing():
+                voice.pause()
                 await ctx.send('Paused!')
 
             else:
@@ -186,13 +169,13 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send('You must be in a voice channel to use this command!')
 
-    
     @commands.command()
     async def resume(self, ctx):
+
         if ctx.message.author.voice:
-            
-            if ctx.voice_client.is_paused():
-                ctx.voice_client.resume()
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+            if voice.is_paused():
+                voice.resume()
                 await ctx.send('Resuming...')
 
             else:
@@ -200,15 +183,14 @@ class MusicPlayer(commands.Cog):
         else:
             await ctx.send('You must be in a voice channel to use this command')
 
-    
     @commands.command()
     async def stop(self, ctx):
         if ctx.message.author.voice:
-            
-            if ctx.voice_client.is_playing():
+            voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
+
+            if voice.is_playing():
                 self.queue.clear()
-                ctx.voice_client.stop()
-                
+                voice.stop()
                 await ctx.send('Stopped!')
                 await ctx.send('Queue cleared!')
 
@@ -222,7 +204,6 @@ class MusicPlayer(commands.Cog):
     async def vol(self, ctx, volume: float):
         if ctx.message.author.voice:
             voice = discord.utils.get(self.client.voice_clients, guild=ctx.guild)
-   
             if voice.is_playing():
                 if 0 <= volume <= 100:
                     new_vol = volume / 100
@@ -234,7 +215,6 @@ class MusicPlayer(commands.Cog):
                 await ctx.send('Nothing is playing in this channel')
         else:
             await ctx.send('You must be in a voice channel to use this command!')
-
 
 async def setup(client):
     await client.add_cog(MusicPlayer(client))
