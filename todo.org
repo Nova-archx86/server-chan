@@ -1,7 +1,7 @@
 #+title: TODOS
 
 * *Known* Bugs
-** TODO Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:0l will be displayed as 6:1 <2024-10-14 Mon>
+** TODO Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:01 will be displayed as 6:1 <2024-10-14 Mon>
 
 * Minor fixes/improvements
 ** DONE Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers. <2024-10-14 Mon>
@@ -12,6 +12,7 @@ CLOSED: [2024-10-06 Sun 12:55]
 
 * Major Features
 ** TODO Add playlist support
+*** TODO Attempt to add support for spotify urls (may not be feasible if against TOS)
 ** TODO Add a search functionallity for already downloaded/cached songs *This depends on changing the file names*
 ** TODO Add a meme command that runs ever 30 or so minutes (reddit is no longer viable due to the API $$$ alternative could be lemmy or some other fedderated service)
 
