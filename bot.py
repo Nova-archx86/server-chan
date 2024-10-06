@@ -19,15 +19,17 @@ discord.utils.setup_logging()
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--token', metavar='<TOKEN>', 
+parser.add_argument('--token', metavar='<TOKEN>',
                         type=str, help='The token to login with',
                         required=False)
-
-parser.add_argument('--prefix', metavar='<PREFIX_CHAR>', 
-                        type=str, help='the command prefix to use ex: !,%, <', 
+parser.add_argument('--prefix', metavar='<PREFIX_CHAR>',
+                        type=str, help='the command prefix to use ex: !,%, <',
                         required=False)
 parser.add_argument('--disable', metavar='<COG>',
                     type=str, help='disable a particular cog',
+                    required=False)
+parser.add_argument('--clean', action='store_true',
+                    help='cleans the music directory on start(if nessecary)',
                     required=False)
 
 args = parser.parse_args()
@@ -88,7 +90,8 @@ async def on_ready():
 
 # entry point
 async def main():
-    clean_dir()
+    if args.clean == True:
+        clean_dir()
     await load()
     await client.start(token)
 
