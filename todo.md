@@ -1,65 +1,65 @@
 
 # Table of Contents
 
-1.  [Bugs](#orgef2d55a)
-    1.  [Fix displayed video duration on embeds to be more precies (e.g currently a video of duration 6:0l will be displayed as 6:1](#org5b85a57)
-2.  [Minor fixes/improvements](#orgb62e4b9)
-    1.  [Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers.](#orgce04278)
-    2.  [Switch the default downloaded filename of all downloaded songs to the title of the song (currently is set to the id as to not conflict with file naming conventions)](#org99ba87c)
-    3.  [Add comandline options to specifically disable the loading of certain cogs](#org29429a4)
-3.  [Major Features](#orgecc0852)
-    1.  [Add playlist support](#orgd9e6f16)
-    2.  [Add a search functionallity for already downloaded/cached songs **This depends on changing the file names**](#org9bfff56)
-    3.  [Add a meme command that runs ever 30 or so minutes (reddit is no longer viable due to the API $$$ alternative could be lemmy or some other fedderated service)](#orgcd099d0)
+1.  [**Known** Bugs](#org4a26183)
+    1.  [Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:0l will be displayed as 6:1 <span class="timestamp-wrapper"><span class="timestamp">&lt;2024-10-14 Mon&gt;</span></span>](#orge1a70e6)
+2.  [Minor fixes/improvements](#org629f6f6)
+    1.  [Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers. <span class="timestamp-wrapper"><span class="timestamp">&lt;2024-10-14 Mon&gt;</span></span>](#org610dca1)
+    2.  [Switch the default downloaded filename of all downloaded songs to the title of the song (currently is set to the id as to not conflict with file naming conventions)](#org4cd5b7f)
+    3.  [Add comandline options to specifically disable the loading of certain cogs](#org78b79e5)
+3.  [Major Features](#org2b86e91)
+    1.  [Add playlist support](#orgbc7dbd4)
+    2.  [Add a search functionallity for already downloaded/cached songs **This depends on changing the file names**](#org8347a48)
+    3.  [Add a meme command that runs ever 30 or so minutes (reddit is no longer viable due to the API $$$ alternative could be lemmy or some other fedderated service)](#org7946d30)
 
 
 
-<a id="orgef2d55a"></a>
+<a id="org4a26183"></a>
 
-# Bugs
-
-
-<a id="org5b85a57"></a>
-
-## TODO Fix displayed video duration on embeds to be more precies (e.g currently a video of duration 6:0l will be displayed as 6:1
+# **Known** Bugs
 
 
-<a id="orgb62e4b9"></a>
+<a id="orge1a70e6"></a>
+
+## TODO Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:0l will be displayed as 6:1 <span class="timestamp-wrapper"><span class="timestamp">&lt;2024-10-14 Mon&gt;</span></span>
+
+
+<a id="org629f6f6"></a>
 
 # Minor fixes/improvements
 
 
-<a id="orgce04278"></a>
+<a id="org610dca1"></a>
 
-## TODO Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers.
+## TODO Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers. <span class="timestamp-wrapper"><span class="timestamp">&lt;2024-10-14 Mon&gt;</span></span>
 
 
-<a id="org99ba87c"></a>
+<a id="org4cd5b7f"></a>
 
 ## TODO Switch the default downloaded filename of all downloaded songs to the title of the song (currently is set to the id as to not conflict with file naming conventions)
 
 
-<a id="org29429a4"></a>
+<a id="org78b79e5"></a>
 
 ## TODO Add comandline options to specifically disable the loading of certain cogs
 
 
-<a id="orgecc0852"></a>
+<a id="org2b86e91"></a>
 
 # Major Features
 
 
-<a id="orgd9e6f16"></a>
+<a id="orgbc7dbd4"></a>
 
 ## TODO Add playlist support
 
 
-<a id="org9bfff56"></a>
+<a id="org8347a48"></a>
 
 ## TODO Add a search functionallity for already downloaded/cached songs **This depends on changing the file names**
 
 
-<a id="orgcd099d0"></a>
+<a id="org7946d30"></a>
 
 ## TODO Add a meme command that runs ever 30 or so minutes (reddit is no longer viable due to the API $$$ alternative could be lemmy or some other fedderated service)
 
