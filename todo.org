@@ -4,7 +4,8 @@
 ** TODO Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:0l will be displayed as 6:1 <2024-10-14 Mon> 
 
 * Minor fixes/improvements
-** TODO Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers. <2024-10-14 Mon> 
+** DONE Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers. <2024-10-14 Mon> 
+CLOSED: [2024-10-05 Sat 22:08]
 ** TODO Switch the default downloaded filename of all downloaded songs to the title of the song (currently is set to the id as to not conflict with file naming conventions)
 ** TODO Add comandline options to specifically disable the loading of certain cogs
 
