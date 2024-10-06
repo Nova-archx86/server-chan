@@ -26,6 +26,9 @@ parser.add_argument('--token', metavar='<TOKEN>',
 parser.add_argument('--prefix', metavar='<PREFIX_CHAR>', 
                         type=str, help='the command prefix to use ex: !,%, <', 
                         required=False)
+parser.add_argument('--disable', metavar='<COG>',
+                    type=str, help='disable a particular cog',
+                    required=False)
 
 args = parser.parse_args()
     
@@ -50,15 +53,12 @@ else:
 
 def clean_dir():
     logging.info('Cleaning music directory...')
-    
     try:
         if os.listdir('music'):
-            
             for file in os.listdir('music'):
                 logging.info(f'removing {file}')
                 os.remove(f'music/{file}')
         else:
-            
             logging.info('Nothing to be cleaned!')
 
     except FileNotFoundError:
@@ -70,8 +70,10 @@ async def load():
     files = os.listdir('cogs')
 
     for file in files:
-        
         if file.endswith('.py'):
+            if args.disable == file:
+                logging.info(f'Skipping the loading of {file}')
+                continue
             await client.load_extension(f'cogs.{file[:-3]}')
             logging.info(f'Loaded cogs.{file[:-3]}')
 
