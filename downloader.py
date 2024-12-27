@@ -31,7 +31,7 @@ class Downloader:
         with YoutubeDL(self.options) as yt: 
             info = yt.extract_info(self.url, download=False)
             
-            id = info.get('id') 
+            video_id = info.get('id')
             title = info.get('title')
             author = info.get('uploader')
             thumbnail = info.get('thumbnail')
@@ -40,7 +40,7 @@ class Downloader:
             duration_secs = info.get('duration')
             mins, secs = divmod(duration_secs, 60)
             duration = f'{mins}:{secs}'
-            video_info = (id, title, duration, thumbnail, author)
+            video_info = (video_id, title, duration, thumbnail, author)
 
             return video_info
 

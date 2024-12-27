@@ -15,6 +15,10 @@ from discord import FFmpegPCMAudio, Embed, Color, ClientException, PCMVolumeTran
 from downloader import Downloader
 from yt_dlp import DownloadError
 
+"""
+Wrapper class for PCMVolumeTransformer objects
+allows you to easily retrive information about a song currently in queue.
+"""
 class QueueItem:
 
     def __init__(self, info:tuple, audio:PCMVolumeTransformer):
@@ -27,7 +31,7 @@ class QueueItem:
 
     async def send_embed(self, ctx, info,  embed_title):
         # video info from yt_dlp
-        id, title, duration, thumbnail, author = info
+        video_id, title, duration, thumbnail, author = info
 
         em = Embed(title=embed_title, color=Color.random())
         em.set_thumbnail(url=thumbnail)
@@ -36,7 +40,10 @@ class QueueItem:
         em.add_field(name='Duration', value=duration, inline=False)
         await ctx.send(embed=em)
 
-
+"""
+The actual queue data structure itself
+resume() is called internally by MusicPlayer.play() after the inital audio file has finished playing.
+"""
 class MusicQueue:
 
     def __init__(self):
@@ -58,18 +65,20 @@ class MusicQueue:
         self.items.clear()
 
     # Loop through the rest of the songs in queue
-    async def loop(self, ctx, vc):
-
-        while len(self.items) >= 1:
+    async def resume(self, ctx, vc):
+        while len(self.items) != 0:
             if not vc.is_playing() and not vc.is_paused():
-                self.pop()
                 try:
-                    vc.play(self.items[0].audio)
+                    vc.play(self.items[0].audio, after=lambda x: self.pop())
                 except ClientException:
                     await ctx.send('An error occured while playing audio')
 
             await asyncio.sleep(1)
 
+"""
+The class that handles the end user facing discord commands,
+e.g !play, !pause, !stop, etc.
+"""
 class MusicPlayer(commands.Cog):
 
     def __init__(self, client):
@@ -89,11 +98,11 @@ class MusicPlayer(commands.Cog):
 
             dl = Downloader(url)
             info = dl.get_info()
-            id = info[0]
+            video_id = info[0]
 
             try:
                 # Check if the audio has already been downloaded
-                if id in os.listdir('./music/'):
+                if video_id in os.listdir('./music/'):
                     await ctx.send('audio already downloaded! skipping download...')
                 else:
                     dl.download()
@@ -101,7 +110,7 @@ class MusicPlayer(commands.Cog):
             except DownloadError as err:
                 await ctx.send('Failed to download audio!')
                 logging.error(f'{err}')
-            source = QueueItem(info, PCMVolumeTransformer(FFmpegPCMAudio(f'./music/{id}'), 0.50))
+            source = QueueItem(info, PCMVolumeTransformer(FFmpegPCMAudio(f'./music/{video_id}'), 0.50))
 
             if voice.is_playing() or voice.is_paused():
                 self.queue.push(source)
@@ -110,7 +119,7 @@ class MusicPlayer(commands.Cog):
             else:
                 self.queue.push(source)
 
-                voice.play(source.audio, after=lambda x: asyncio.run(self.queue.loop(ctx, voice)))
+                voice.play(source.audio, after=lambda x: asyncio.run(self.queue.resume(ctx, voice)))
                 await source.send_embed(ctx, info, 'Now playing:')
 
         else:
@@ -148,7 +157,7 @@ class MusicPlayer(commands.Cog):
                     self.queue.pop()
                 else:
                     await ctx.send('skipped!')
-                    await self.queue.loop(ctx, voice)
+                    await self.queue.resume(ctx, voice)
 
             else:
                 await ctx.send('Nothing is playing in this channel')
