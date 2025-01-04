@@ -1,7 +1,8 @@
 #+title: TODOS
 
-* *Known* Bugs
-** TODO Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:01 will be displayed as 6:1 <2024-10-14 Mon>
+* *Known* Bugs/Issues
+** TODO Fix displayed video duration on embeds to be more precise (e.g currently a video of duration 6:01 will be displayed as 6:1
+** HOLD Currently the bot will not work on python versions > 3.12 as a dependancy of discord (audioop) has not been ported to work with python 3.13 quite yet
 
 * Minor fixes/improvements
 ** DONE Make sure that all commands make use of discord guilds as to not create conflicts when the bot is in use in other servers. <2024-10-14 Mon>
