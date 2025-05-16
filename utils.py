@@ -5,33 +5,6 @@ import asyncio
 import os
 
 from yt_dlp import YoutubeDL
-from discord.ext import commands
-from discord import FFmpegPCMAudio, Embed, Color, ClientException, PCMVolumeTransformer
-
-"""
-Wrapper class for PCMVolumeTransformer objects
-allows you to easily retrive information about a song currently in queue.
-"""
-class QueueItem:
-
-    def __init__(self, info:tuple, audio:PCMVolumeTransformer):
-        self.info = info
-        self.audio = audio
-
-    def __repr__(self):
-        title = self.info[1]
-        return title
-
-    async def send_embed(self, ctx, info,  embed_title):
-        # video info from yt_dlp
-        video_id, title, duration, thumbnail, author = info
-
-        em = Embed(title=embed_title, color=Color.random())
-        em.set_thumbnail(url=thumbnail)
-        em.add_field(name='Song', value=title, inline=False)
-        em.add_field(name='Channel', value=author, inline=False)
-        em.add_field(name='Duration', value=duration, inline=False)
-        await ctx.send(embed=em)
 
 class Downloader:
 
@@ -45,7 +18,7 @@ class Downloader:
 
         self.options = {
             'format': 'bestaudio',
-            'outtmpl': '%(id)s',
+            'outtmpl': '%(titles)s',
             'quiet': True,
             'noplaylist': True,
             'source_address': '0.0.0.0'
