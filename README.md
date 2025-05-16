@@ -20,7 +20,7 @@ more information can be found here: https://discord.com/developers/docs/intro
 
     python3 bot.py --token <your generated token here> --prefix <your prefix of choice>
 
-Optionally, you can also set the TOKEN_1 enviorment variable to the token that you generated via the discord dev portal to avoid having to constantly using the --token option.
+Optionally, you can also set a TOKEN_1 enviorment variable to the token that you generated via the discord dev portal to avoid having to constantly using the --token option.
 
 ### Disabling specific cogs
 By default all files in the cogs/ directory will be loaded, however if there is a particular cog that you wish to disable then you can do so with the --disable flag
